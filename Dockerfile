@@ -17,7 +17,7 @@ RUN touch src/main.rs src/lib.rs
 RUN cargo build --release
 
 # Copy binary to release image
-FROM debian:13.4-slim
+FROM debian:13.5-slim
 WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libdbus-1-3 \
