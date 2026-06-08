@@ -24,6 +24,9 @@ jobs:
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev
+
       - name: Set up Rust toolchain
         run: rustup show
 
