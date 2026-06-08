@@ -10,25 +10,34 @@ env:
   IMAGE_NAME: dewpoint
 
 jobs:
-  publish-crate:
-    name: Publish to Crates.io
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev
-
-      - name: Set up Rust toolchain
-        run: rustup show
-
-      - name: Cache dependencies
-        uses: swatinem/rust-cache@v2
-
-      - name: Cargo Publish
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish
+  # NOTE: Publishing to crates.io is disabled because the crate name "dewpoint"
+  # is already registered by another author (an unrelated 2018 weather crate,
+  # https://crates.io/crates/dewpoint). crates.io does not release taken names,
+  # even when all versions are yanked, so `cargo publish` would fail with a
+  # "not an owner" error. To enable crates.io publishing, rename the published
+  # package to an available name (keeping the binary as "dewpoint" via a [[bin]]
+  # entry in Cargo.toml), add a CARGO_REGISTRY_TOKEN secret, then uncomment this
+  # job.
+  #
+  # publish-crate:
+  #   name: Publish to Crates.io
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #
+  #     - name: Install system dependencies
+  #       run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev
+  #
+  #     - name: Set up Rust toolchain
+  #       run: rustup show
+  #
+  #     - name: Cache dependencies
+  #       uses: swatinem/rust-cache@v2
+  #
+  #     - name: Cargo Publish
+  #       env:
+  #         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+  #       run: cargo publish
 
   publish-docker:
     name: Publish Docker Image
