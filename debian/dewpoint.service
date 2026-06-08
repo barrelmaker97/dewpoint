@@ -1,0 +1,13 @@
+[Unit]
+Description=Dewpoint
+Wants=network-online.target
+After=network.target network-online.target bluetooth.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dewpoint
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target

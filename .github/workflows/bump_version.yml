@@ -1,0 +1,65 @@
+---
+name: Bump Version & Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Bump Type'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        required: true
+        default: 'patch'
+
+jobs:
+  bump-and-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Set up Rust toolchain
+        run: rustup show
+
+      - name: Install cargo-edit
+        run: cargo install cargo-edit
+
+      - name: Configure Git User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update Version
+        id: version
+        run: |
+          cargo set-version --bump ${{ inputs.bump_type }}
+          # Extract the new version and update Cargo.lock
+          NEW_VER=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "dewpoint") | .version')
+          echo "new_version=$NEW_VER" >> $GITHUB_OUTPUT
+
+          # Ensure Cargo.lock is updated
+          cargo check --locked > /dev/null 2>&1 || cargo check > /dev/null 2>&1
+
+      - name: Commit and Push Tag
+        run: |
+          NEW_VER=${{ steps.version.outputs.new_version }}
+          TAG_NAME="v$NEW_VER"
+
+          # Check if tag exists
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+             echo "::error::Tag $TAG_NAME already exists!"
+             exit 1
+          fi
+
+          git add Cargo.toml Cargo.lock
+          git commit -m "chore: release $TAG_NAME"
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+
+          # Push commit and tag
+          git push origin main --follow-tags

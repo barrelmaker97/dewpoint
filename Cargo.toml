@@ -1,0 +1,49 @@
+[package]
+name = "dewpoint"
+version = "0.1.0"
+edition = "2024"
+description = "A Prometheus exporter for Govee H5075 Bluetooth thermometer/hygrometer sensors."
+license = "GPL-3.0-or-later"
+repository = "https://github.com/barrelmaker97/dewpoint"
+keywords = ["govee", "bluetooth", "prometheus", "exporter", "monitoring"]
+authors = ["Nolan Cooper <nolancooper97@gmail.com>"]
+
+[profile.release]
+strip = "symbols"
+
+[package.metadata.deb]
+maintainer-scripts = "debian/"
+systemd-units = { enable = false }
+revision = ""
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+unused_imports = "warn"
+unused_qualifications = "warn"
+unused_variables = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+dbg_macro = "deny"
+clone_on_ref_ptr = "warn"
+panic = "warn"
+print_stderr = "warn"
+print_stdout = "warn"
+todo = "warn"
+unwrap_used = "warn"
+
+[dependencies]
+btleplug = "0.11.8"
+clap = { version = "4.5.17", features = ["derive", "env"] }
+env_logger = "0.11.10"
+futures = "0.3.31"
+log = "0.4.22"
+metrics = "0.24.6"
+metrics-exporter-prometheus = { version = "0.18.3", default-features = false, features = ["http-listener"] }
+metrics-util = "0.20.0"
+tokio = { version = "1.51.1", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
