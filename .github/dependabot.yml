@@ -9,6 +9,13 @@ updates:
       dependencies:
         patterns:
           - "*"
+    # btleplug pulls in the native libdbus-sys crate, whose build script
+    # requires the system D-Bus headers. Dependabot's update environment has
+    # no way to install system packages, so resolving btleplug always fails
+    # (see dependabot/dependabot-core#3587). Ignore it here and bump it
+    # manually; every other Rust dependency still updates automatically.
+    ignore:
+      - dependency-name: "btleplug"
 
   - package-ecosystem: "docker"
     directory: "/"
