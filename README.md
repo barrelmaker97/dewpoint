@@ -103,9 +103,18 @@ A container image is published to the GitHub Container Registry. Because dewpoin
 docker run -d \
   --name dewpoint \
   --net=host \
+  --security-opt apparmor=unconfined \
   -v /var/run/dbus:/var/run/dbus \
   ghcr.io/barrelmaker97/dewpoint:latest
 ```
+
+> [!NOTE]
+> On hosts with AppArmor (e.g. Ubuntu/Debian), Docker's default profile blocks
+> the container from talking to the host system bus, causing dewpoint to fail
+> with `Could not find a Bluetooth adapter: An AppArmor policy prevents this
+> sender from sending this message`. The `--security-opt apparmor=unconfined`
+> flag above relaxes that confinement so the container can reach BlueZ. Hosts
+> without AppArmor do not need the flag.
 
 ## Logging
 
