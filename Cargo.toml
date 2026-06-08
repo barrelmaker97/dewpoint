@@ -1,6 +1,6 @@
 [package]
 name = "dewpoint"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "A Prometheus exporter for Govee H5075 Bluetooth thermometer/hygrometer sensors."
 license = "GPL-3.0-or-later"
